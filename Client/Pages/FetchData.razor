@@ -6,12 +6,20 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+@if (authenticated == false)
 {
+    <p><em>Please log in to display data.</em></p>
+    <p><a href="/.auth/login/github">Login with Github</a></p>
+    <p><a href="/.auth/login/aad">Login with Microsoft Account</a></p>
+}
+else if (forecasts == null)
+{
+    <p><a href="/.auth/logout">Logout</a></p>
     <p><em>Loading...</em></p>
 }
 else
 {
+    <p><a href="/.auth/logout">Logout</a></p>
     <table class="table">
         <thead>
             <tr>
@@ -37,12 +45,14 @@ else
 
 @code {
     private WeatherForecast[] forecasts;
+    private bool authenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
       try
       {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("/api/WeatherForecast");
+        authenticated = true;
       }
       catch (Exception ex)
       {
